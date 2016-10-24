@@ -93,4 +93,24 @@ class InstaCatFactory {
         return  nil
     }
     
+    func getInstaCatsTwo(from apiEndpoint: String, callback:@escaping ([InstaCat]?)->()) {
+        if let validInstaCatEndpoint: URL = URL(string: apiEndpoint) {
+            let session = URLSession(configuration: URLSessionConfiguration.default)
+            session.dataTask(with: validInstaCatEndpoint) { (data: Data?, response: URLResponse?, error: Error?) in
+                if error != nil {
+                    print("Error encountered!: \(error!)")
+                }
+                if let validData: Data = data {
+                    if let allTheCats = InstaCatFactory.manager.getInstaCats(from: validData) {
+                        callback(allTheCats)
+                        if error != nil {
+                            print("Error encountered!: \(error!)")
+                        }
+                    }
+                }
+                }.resume()
+        }
+    }
+
+    
 }
