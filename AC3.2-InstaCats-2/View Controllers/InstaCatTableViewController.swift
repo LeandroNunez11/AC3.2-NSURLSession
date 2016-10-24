@@ -9,6 +9,10 @@
 import UIKit
 
 class InstaCatTableViewController: UITableViewController {
+    enum Section : Int {
+        case cat
+        case dog
+    }
     
     internal let InstaCatTableViewCellIdentifier: String = "InstaCatCellIdentifier"
     internal let instaCatEndpoint: String = "https://api.myjson.com/bins/254uw"
@@ -61,29 +65,40 @@ class InstaCatTableViewController: UITableViewController {
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        if (instaCats.count > 0 && instaDogs.count > 0) {
+            return 2
+        }
+        else {
+            return 0
+        }
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return instaCats.count
+        if let s = Section(rawValue: section) {
+            switch s {
+            case .cat:
+                return instaCats.count
+            case .dog:
+                return instaDogs.count
+            }
+        }
+        return 0
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: InstaCatTableViewCellIdentifier, for: indexPath)
+        var cell: UITableViewCell = UITableViewCell()
         
         if indexPath.section == 0 {
-        cell.textLabel?.text = self.instaCats[indexPath.row].name
-        cell.detailTextLabel?.text = self.instaCats[indexPath.row].description
-        return cell
+            cell = tableView.dequeueReusableCell(withIdentifier: InstaCatTableViewCellIdentifier, for: indexPath)
+            cell.textLabel?.text = self.instaCats[indexPath.row].name
+            cell.detailTextLabel?.text = self.instaCats[indexPath.row].description
         }
         if indexPath.section == 1 {
-            //let cell = tableView.dequeueReusableCell(withIdentifier: InstaDogTableViewCellIdentifier, for: indexPath)
+            cell = tableView.dequeueReusableCell(withIdentifier: InstaDogTableViewCellIdentifier, for: indexPath)
             cell.textLabel?.text = self.instaDogs[indexPath.row].name
             cell.detailTextLabel?.text = self.instaDogs[indexPath.row].formattedStats()
             cell.imageView?.image = self.instaDogs[indexPath.row].profileImage()
-            return cell
         }
         return cell
-}
+    }
 }
